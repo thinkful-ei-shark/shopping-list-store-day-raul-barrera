@@ -5,8 +5,14 @@ const store = {
     { id: cuid(), name: 'milk', checked: true },
     { id: cuid(), name: 'bread', checked: false }
   ],
-  hideCheckedItems: false
+  hideCheckedItems: false,
+  itemToEdit: 0,
+  itemToEditName: ''
 };
+
+const generateDropDownList = function() {
+  return store.items.map(item => `<option value='${item.id}'>${item.name}</option>`).join('');
+}
 
 const generateItemElement = function (item) {
   let itemTitle = `<span class='shopping-item shopping-item__checked'>${item.name}</span>`;
@@ -59,6 +65,7 @@ const render = function () {
   const shoppingListItemsString = generateShoppingItemsString(items);
 
   // insert that HTML into the DOM
+  $('.shopping-list-dropdown').html(generateDropDownList);
   $('.js-shopping-list').html(shoppingListItemsString);
 };
 
@@ -76,6 +83,15 @@ const handleNewItemSubmit = function () {
   });
 };
 
+const handleEditItemClick = function() {
+  $('#js-shopping-list-form').on('click', '#edit',function(e){  
+    const changeToName = $('.js-shopping-list-edit').val()
+    const index = store.items.findIndex(i => i.id === store.itemToEdit);
+    store.items[index].name = changeToName;
+    render();
+  });
+};
+
 const toggleCheckedForListItem = function (id) {
   const foundItem = store.items.find(item => item.id === id);
   foundItem.checked = !foundItem.checked;
@@ -88,6 +104,12 @@ const handleItemCheckClicked = function () {
     render();
   });
 };
+
+const handleItemSelected = function() {
+  $('.shopping-list-dropdown').click(function() {
+    store.itemToEdit = $(this).val();
+  });
+}
 
 const getItemIdFromElement = function (item) {
   return $(item)
@@ -160,6 +182,9 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleItemSelected();
+  handleEditItemClick();
+
 };
 
 // when the page loads, call `handleShoppingList`
