@@ -11,7 +11,8 @@ const store = {
 };
 
 const generateDropDownList = function() {
-  return store.items.map(item => `<option value='${item.id}'>${item.name}</option>`).join('');
+  
+  return store.items.map(item => !item.checked?`<option value='${item.id}'>${item.name}</option>`:'').join('');
 }
 
 const generateItemElement = function (item) {
